@@ -1,9 +1,9 @@
 #!/bin/bash
 ## Author: SuperManito
-## Modified: 2021-12-15
+## Modified: 2022-02-25
 ## License: GPL-2.0
-## Github Repository: https://github.com/SuperManito/LinuxMirrors
-## Gitee Repository: https://gitee.com/SuperManito/LinuxMirrors
+## Github: https://github.com/SuperManito/LinuxMirrors
+## Gitee: https://gitee.com/SuperManito/LinuxMirrors
 
 function AuthorSignature() {
     echo -e "\n${GREEN} ------------ 脚本执行结束 ------------ ${PLAIN}\n"
@@ -16,7 +16,8 @@ function AuthorSignature() {
     echo -e '\033[0;1;35;95m│\033[0m          \033[0;1;34;94m/\033[0;1;35;95m_/\033[0m                                               \033[0;1;35;95m│\033[0m'
     echo -e '\033[0;1;31;91m└─\033[0;1;33;93m──\033[0;1;32;92m──\033[0;1;36;96m──\033[0;1;34;94m──\033[0;1;35;95m──\033[0;1;31;91m──\033[0;1;33;93m──\033[0;1;32;92m──\033[0;1;36;96m──\033[0;1;34;94m──\033[0;1;35;95m──\033[0;1;31;91m──\033[0;1;33;93m──\033[0;1;32;92m──\033[0;1;36;96m──\033[0;1;34;94m──\033[0;1;35;95m──\033[0;1;31;91m──\033[0;1;33;93m──\033[0;1;32;92m──\033[0;1;36;96m──\033[0;1;34;94m──\033[0;1;35;95m──\033[0;1;31;91m──\033[0;1;33;93m──\033[0;1;32;92m──\033[0;1;36;96m──\033[0;1;34;94m──\033[0;1;35;95m──\033[0;1;31;91m─┘\033[0m\n'
 
-    echo -e " \033[1;34mGithub\033[0m - https://github.com/SuperManito/LinuxMirrors"
+    echo -e " \033[1;34m官方网站\033[0m https://supermanito.github.io/LinuxMirrors\n"
+    echo -e " \033[1;34mGitHub\033[0m - https://github.com/SuperManito/LinuxMirrors"
     echo -e " \033[1;34mGitee\033[0m  - https://gitee.com/SuperManito/LinuxMirrors\n"
 }
 
@@ -161,10 +162,10 @@ function PermissionJudgment() {
 }
 
 ## 关闭 防火墙 和 SELINUX
-function TurnOffFirewall() {
+function CloseFirewall() {
     systemctl status firewalld | grep running -q
     if [ $? -eq 0 ]; then
-        CHOICE_C=$(echo -e "\n${BOLD}└ 是否关闭防火墙和 SELINUX [ Y/n ]：${PLAIN}")
+        CHOICE_C=$(echo -e "\n${BOLD}└ 是否关闭防火墙和 SELINUX? [Y/n] ${PLAIN}")
         read -p "${CHOICE_C}" INPUT
         [ -z ${INPUT} ] && INPUT=Y
         case $INPUT in
@@ -202,7 +203,7 @@ function BackupMirrors() {
         ## /etc/apt/sources.list
         if [ -s $DebianSourceList ]; then
             if [ -s $DebianSourceListBackup ]; then
-                CHOICE_BACKUP1=$(echo -e "\n${BOLD}└ 检测到系统存在已备份的 list 源文件，是否覆盖备份 [ Y/n ]：${PLAIN}")
+                CHOICE_BACKUP1=$(echo -e "\n${BOLD}└ 检测到系统存在已备份的 list 源文件，是否覆盖备份? [Y/n] ${PLAIN}")
                 read -p "${CHOICE_BACKUP1}" INPUT
                 [ -z ${INPUT} ] && INPUT=Y
                 case $INPUT in
@@ -227,7 +228,7 @@ function BackupMirrors() {
         ## /etc/apt/sources.list.d
         if [ -d $DebianExtendListDir ] && [ ${VERIFICATION_FILES} -eq 0 ]; then
             if [ -d $DebianExtendListDirBackup ] && [ ${VERIFICATION_BACKUPFILES} -eq 0 ]; then
-                CHOICE_BACKUP2=$(echo -e "\n${BOLD}└ 检测到系统存在已备份的 list 第三方源文件，是否覆盖备份 [ Y/n ]：${PLAIN}")
+                CHOICE_BACKUP2=$(echo -e "\n${BOLD}└ 检测到系统存在已备份的 list 第三方源文件，是否覆盖备份? [Y/n] ${PLAIN}")
                 read -p "${CHOICE_BACKUP2}" INPUT
                 [ -z ${INPUT} ] && INPUT=Y
                 case $INPUT in
@@ -250,7 +251,7 @@ function BackupMirrors() {
         ## /etc/yum.repos.d
         if [ ${VERIFICATION_FILES} -eq 0 ]; then
             if [ -d $RedHatReposDirBackup ] && [ ${VERIFICATION_BACKUPFILES} -eq 0 ]; then
-                CHOICE_BACKUP3=$(echo -e "\n${BOLD}└ 检测到系统存在已备份的 repo 源文件，是否覆盖备份 [ Y/n ]：${PLAIN}")
+                CHOICE_BACKUP3=$(echo -e "\n${BOLD}└ 检测到系统存在已备份的 repo 源文件，是否覆盖备份? [Y/n] ${PLAIN}")
                 read -p "${CHOICE_BACKUP3}" INPUT
                 [ -z ${INPUT} ] && INPUT=Y
                 case $INPUT in
@@ -295,7 +296,6 @@ function ChangeMirrors() {
         DebianMirrors
     elif [ ${SYSTEM_FACTIONS} = ${SYSTEM_REDHAT} ]; then
         RedHatMirrors
-        yum clean all >/dev/null 2>&1
     fi
     echo -e "\n${WORKING} 开始${SYNC_TXT}软件源...\n"
     case ${SYSTEM_FACTIONS} in
@@ -321,7 +321,7 @@ function ChangeMirrors() {
 
 ## 更新软件包
 function UpgradeSoftware() {
-    CHOICE_B=$(echo -e "\n${BOLD}└ 是否更新软件包 [ Y/n ]：${PLAIN}")
+    CHOICE_B=$(echo -e "\n${BOLD}└ 是否更新软件包? [Y/n] ${PLAIN}")
     read -p "${CHOICE_B}" INPUT
     [ -z ${INPUT} ] && INPUT=Y
     case $INPUT in
@@ -335,7 +335,7 @@ function UpgradeSoftware() {
             yum update -y
             ;;
         esac
-        CHOICE_C=$(echo -e "\n${BOLD}└ 是否清理已下载的软件包缓存 [ Y/n ]：${PLAIN}")
+        CHOICE_C=$(echo -e "\n${BOLD}└ 是否清理已下载的软件包缓存? [Y/n] ${PLAIN}")
         read -p "${CHOICE_C}" INPUT
         [ -z ${INPUT} ] && INPUT=Y
         case $INPUT in
@@ -405,7 +405,6 @@ deb-src ${WEB_PROTOCOL}://${SOURCE}/${SOURCE_BRANCH} ${SYSTEM_VERSION} main non-
 ## 更换基于 RedHat 系 Linux 发行版的国内源
 function RedHatMirrors() {
     ## 生成基于 RedHat 发行版和及其衍生发行版的官方 repo 源文件
-    cd $RedHatReposDir
     case ${SYSTEM_JUDGMENT} in
     RedHat | CentOS)
         CreateCentOSRepoFiles
@@ -414,33 +413,54 @@ function RedHatMirrors() {
         CreateReposRepoFiles
         ;;
     esac
+
     ## 修改源
+    cd $RedHatReposDir
     if [ ${SYSTEM_JUDGMENT} = ${SYSTEM_CENTOS} -o ${SYSTEM_JUDGMENT} = ${SYSTEM_RHEL} ]; then
-        sed -i 's|^mirrorlist=|#mirrorlist=|g' $RedHatReposDir/${SYSTEM_CENTOS}-*
-        [ ${CENTOS_VERSION} -eq "8" ] && sed -i 's|^#baseurl=http://mirror.centos.org/$contentdir|baseurl=http://mirror.centos.org/centos|g' $RedHatReposDir/${SYSTEM_CENTOS}-*
-        sed -i "s|^#baseurl=http|baseurl=${WEB_PROTOCOL}|g" $RedHatReposDir/${SYSTEM_CENTOS}-*
-        sed -i "s|mirror.centos.org|${SOURCE}|g" $RedHatReposDir/${SYSTEM_CENTOS}-*
+        sed -i 's|^mirrorlist=|#mirrorlist=|g' ${SYSTEM_CENTOS}-*
+
+        ## CentOS 8 操作系统版本结束了生命周期（EOL），Linux 社区已不再维护该操作系统版本，最终版本为 8.5.2011
+        ## 原 centos 镜像中的 CentOS 8 相关内容已被官方移动，从 2022-02 开始切换至 centos-vault 源
+        if [ ${CENTOS_VERSION} -eq "8" ]; then
+            sed -i 's|^#baseurl=http://mirror.centos.org/$contentdir|#baseurl=http://mirror.centos.org/centos-vault|g' ${SYSTEM_CENTOS}-*
+            sed -i "s/\$releasever/8.5.2111/g" ${SYSTEM_CENTOS}-*
+        fi
+
+        ## WEB协议
+        sed -i "s|^#baseurl=http|baseurl=${WEB_PROTOCOL}|g" ${SYSTEM_CENTOS}-*
+        ## 更换软件源
+        sed -i "s|mirror.centos.org|${SOURCE}|g" ${SYSTEM_CENTOS}-*
+
         ## Red Hat Enterprise Linux 修改版本号
-        [ ${SYSTEM_JUDGMENT} = ${SYSTEM_RHEL} ] && sed -i "s/\$releasever/${CENTOS_VERSION}/g" ${SYSTEM_CENTOS}-*
-        ## 安装/更换基于 CentOS 的 EPEL 扩展国内源
+        if [ ${SYSTEM_JUDGMENT} = ${SYSTEM_RHEL} ]; then
+            if [ ${CENTOS_VERSION} -eq "8" ]; then
+                sed -i "s/\$releasever/8.5.2111/g" ${SYSTEM_CENTOS}-*
+            elif [ ${CENTOS_VERSION} -eq "7" ]; then
+                sed -i "s/\$releasever/7/g" ${SYSTEM_CENTOS}-*
+            fi
+        fi
+
+        ## 安装/更换基于 RHEL/CentOS 的 EPEL 扩展国内源
         [ ${EPEL_INSTALL} = "True" ] && EPELMirrors
     elif [ ${SYSTEM_JUDGMENT} = ${SYSTEM_FEDORA} ]; then
         sed -i 's|^metalink=|#metalink=|g' \
-            $RedHatReposDir/${SOURCE_BRANCH}.repo \
-            $RedHatReposDir/${SOURCE_BRANCH}-updates.repo \
-            $RedHatReposDir/${SOURCE_BRANCH}-modular.repo \
-            $RedHatReposDir/${SOURCE_BRANCH}-updates-modular.repo \
-            $RedHatReposDir/${SOURCE_BRANCH}-updates-testing.repo \
-            $RedHatReposDir/${SOURCE_BRANCH}-updates-testing-modular.repo
-        sed -i "s|^#baseurl=http|baseurl=${WEB_PROTOCOL}|g" $RedHatReposDir/fedora*
+            ${SOURCE_BRANCH}.repo \
+            ${SOURCE_BRANCH}-updates.repo \
+            ${SOURCE_BRANCH}-modular.repo \
+            ${SOURCE_BRANCH}-updates-modular.repo \
+            ${SOURCE_BRANCH}-updates-testing.repo \
+            ${SOURCE_BRANCH}-updates-testing-modular.repo
+        sed -i "s|^#baseurl=http|baseurl=${WEB_PROTOCOL}|g" fedora*
         sed -i "s|download.example/pub/fedora/linux|${SOURCE}/fedora|g" \
-            $RedHatReposDir/fedora.repo \
-            $RedHatReposDir/${SOURCE_BRANCH}-updates.repo \
-            $RedHatReposDir/${SOURCE_BRANCH}-modular.repo \
-            $RedHatReposDir/${SOURCE_BRANCH}-updates-modular.repo \
-            $RedHatReposDir/${SOURCE_BRANCH}-updates-testing.repo \
-            $RedHatReposDir/${SOURCE_BRANCH}-updates-testing-modular.repo
+            fedora.repo \
+            ${SOURCE_BRANCH}-updates.repo \
+            ${SOURCE_BRANCH}-modular.repo \
+            ${SOURCE_BRANCH}-updates-modular.repo \
+            ${SOURCE_BRANCH}-updates-testing.repo \
+            ${SOURCE_BRANCH}-updates-testing-modular.repo
     fi
+    ## 清理 YUM 缓存
+    yum clean all >/dev/null 2>&1
 }
 
 ## 安装/更换基于 RHEL/CentOS 的 EPEL (Extra Packages for Enterprise Linux) 扩展国内源
@@ -570,9 +590,9 @@ function ChooseMirrors() {
         VERIFICATION_EPELBACKUPFILES=$?
 
         if [ ${VERIFICATION_EPEL} -eq 0 ]; then
-            CHOICE_D=$(echo -e "\n${BOLD}└ 检测到系统已安装 EPEL 扩展源，是否替换/覆盖为国内源 [ Y/n ]：${PLAIN}")
+            CHOICE_D=$(echo -e "\n${BOLD}└ 检测到系统已安装 EPEL 扩展源，是否替换/覆盖为国内源? [Y/n] ${PLAIN}")
         else
-            CHOICE_D=$(echo -e "\n${BOLD}└ 是否安装 EPEL 扩展源 [ Y/n ]：${PLAIN}")
+            CHOICE_D=$(echo -e "\n${BOLD}└ 是否安装 EPEL 扩展源? [Y/n] ${PLAIN}")
         fi
         read -p "${CHOICE_D}" INPUT
         [ -z ${INPUT} ] && INPUT=Y
@@ -591,7 +611,7 @@ function ChooseMirrors() {
     fi
 
     ## 选择同步软件源所使用的 WEB 协议（ HTTP：80 端口，HTTPS：443 端口）
-    CHOICE_E=$(echo -e "\n${BOLD}└ 软件源是否使用 HTTP 协议 [ Y/n ]：${PLAIN}")
+    CHOICE_E=$(echo -e "\n${BOLD}└ 软件源是否使用 HTTP 协议? [Y/n] ${PLAIN}")
     read -p "${CHOICE_E}" INPUT
     [ -z ${INPUT} ] && INPUT=Y
     case $INPUT in
@@ -608,7 +628,7 @@ function ChooseMirrors() {
     esac
 
     ## 关闭 防火墙 和 SELINUX
-    [ ${SYSTEM_FACTIONS} = ${SYSTEM_REDHAT} ] && TurnOffFirewall
+    [ ${SYSTEM_FACTIONS} = ${SYSTEM_REDHAT} ] && CloseFirewall
 }
 
 ## 生成 CentOS 官方 repo 源文件
